@@ -64,7 +64,7 @@ public class ExceptionMiddleware(ILogger<ExceptionMiddleware> logger, IHostEnvir
             Status = StatusCodes.Status400BadRequest,
             Type = "ValidationFailure",
             Title = "Validation Error",
-            Detail = "We are sorry, but one or more validation errors has occured"
+            Detail = "One or more validation errors has occured"
         };
 
         await context.Response.WriteAsJsonAsync(validationProblemDetails);
