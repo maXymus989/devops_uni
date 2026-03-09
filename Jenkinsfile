@@ -1,20 +1,24 @@
 pipeline {
     agent any
-    tools {
-        sonarScannerMsBuild 'dotnet-scanner' 
-    }
     stages {
         stage('Checkout') {
             steps {
-                checkout scm 
+                checkout scm
             }
         }
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube') {
-                    sh "dotnet-sonarscanner begin /k:\"my-key\""
-                    sh "dotnet build"
-                    sh "dotnet-sonarscanner end"
+                script {
+                    // Отримуємо шлях до сканера за його ім'ям з Global Tool Configuration
+                    def scannerHome = tool name: 'dotnet-scanner', type: 'hudson.plugins.sonar.MsBuildSQRunnerInstallation'
+                    
+                    withSonarQubeEnv('SonarQube') {
+                        // Використовуємо отриманий шлях для запуску
+                        // Якщо сканер встановлений як глобальний інструмент dotnet, можна просто 'dotnet sonarscanner'
+                        sh "${scannerHome}/dotnet-sonarscanner begin /k:\"my-backend-key\""
+                        sh "dotnet build"
+                        sh "${scannerHome}/dotnet-sonarscanner end"
+                    }
                 }
             }
         }
