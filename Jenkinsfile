@@ -8,16 +8,13 @@ pipeline {
         }
         stage('SonarQube Analysis') {
             steps {
-                script {
-                    // Отримуємо шлях до сканера за його ім'ям з Global Tool Configuration
-                    def scannerHome = tool name: 'dotnet-scanner', type: 'hudson.plugins.sonar.MsBuildSQRunnerInstallation'
-                    
-                    withSonarQubeEnv('SonarQube') {
-                        // Використовуємо отриманий шлях для запуску
-                        // Якщо сканер встановлений як глобальний інструмент dotnet, можна просто 'dotnet sonarscanner'
-                        sh "${scannerHome}/dotnet-sonarscanner begin /k:\"my-backend-key\""
+                withSonarQubeEnv('SonarQube') {
+                    script {
+                        def dotnetTools = "${HOME}/.dotnet/tools"
+                        
+                        sh "${dotnetTools}/dotnet-sonarscanner begin /k:\"my-backend-key\" /n:\"My Backend\" /v:\"1.0\""
                         sh "dotnet build"
-                        sh "${scannerHome}/dotnet-sonarscanner end"
+                        sh "${dotnetTools}/dotnet-sonarscanner end"
                     }
                 }
             }
