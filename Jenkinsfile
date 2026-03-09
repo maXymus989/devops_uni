@@ -1,7 +1,7 @@
 pipeline {
     agent any
     tools {
-        dotnet 'dotnet-scanner' 
+        sonarScannerMsBuild 'dotnet-scanner' 
     }
     stages {
         stage('Checkout') {
